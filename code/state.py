@@ -2,7 +2,7 @@ import os
 
 
 class State:
-    def __init__(self, s=None):
+    def __init__(self, s=None, name=None):
         if s is None:
             self._array = [[str(3*i + j) for j in range(3)] for i in range(3)]
         else:
@@ -12,11 +12,16 @@ class State:
                 assert len(l) == 3
             self._array = array
 
+    def __str__(self):
+        return self.to_string()
+
+    def __repr__(self):
+        return self.to_string()
+
     def copy(self):
         result = State()
         result._array = [[c for c in a] for a in self._array]
         return result
-
 
     def _get_location_char(self, c):
         for i in range(3):

@@ -7,9 +7,15 @@ def traverse(goal_state, prev):
     (goal_state, None)
     '''
     result = [(goal_state, None)]
-    # remove the following line and complete the algorithm
-    assert False
-    return result
+    current_state = goal_state
+    next_action = None
+    while current_state.to_string() in prev.keys():
+        result.append((current_state, next_action))
+        if prev[current_state.to_string()] is None:
+            break
+        current_state, next_action = prev[current_state.to_string()]
+    result.reverse()
+    return result[:-1]
 
 
 def print_plan(plan):
