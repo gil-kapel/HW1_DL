@@ -20,7 +20,10 @@ def traverse(goal_state, prev):
 
 def print_plan(plan):
     print('plan length {}'.format(len(plan)-1))
+    final_plan = []
     for current_state, action in plan:
         print(current_state.to_string())
         if action is not None:
             print('apply action {}'.format(action))
+            final_plan.append(action)
+    # print(''.join(final_plan))

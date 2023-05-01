@@ -31,15 +31,17 @@ def dijkstra(puzzle):
 
     while len(fringe) > 0:
         current_priority, current_item = heapq.heappop(fringe)
-        if current_item == goal:
-            return prev
-        for action in current_item.get_actions():
-            next_state = current_item.apply_action(action)
-            next_dist = current_priority + 1
-            if next_state.to_string() not in distances.keys() or distances[next_state.to_string()] > next_dist:
-                distances[next_state.to_string()] = next_dist
-                prev[next_state.to_string()] = (current_item, action)
-                heapq.heappush(fringe, (next_dist, next_state))
+        if current_item.to_string() not in concluded:
+            concluded.add(current_item.to_string())
+            if current_item == goal:
+                break
+            for action in current_item.get_actions():
+                next_state = current_item.apply_action(action)
+                next_dist = current_priority + 1
+                if next_state.to_string() not in distances.keys() or distances[next_state.to_string()] > next_dist:
+                    distances[next_state.to_string()] = next_dist
+                    prev[next_state.to_string()] = (current_item, action)
+                    heapq.heappush(fringe, (next_dist, next_state))
     return prev
 
 
@@ -56,10 +58,21 @@ if __name__ == '__main__':
     # we create some start and goal states. the number of actions between them is 25 although a shorter plan of
     # length 19 exists (make sure your plan is of the same length)
     initial_state = State()
-    actions = [
-        'r', 'r', 'd', 'l', 'u', 'l', 'd', 'd', 'r', 'r', 'u', 'l', 'd', 'r', 'u', 'u', 'l', 'd', 'l', 'd', 'r', 'r',
-        'u', 'l', 'u'
-    ]
+    case = 1
+    if case == 1:
+        actions = [
+            'r', 'r', 'd', 'l', 'u', 'l', 'd', 'd', 'r', 'r', 'u', 'l', 'd', 'r', 'u', 'u', 'l', 'd', 'l', 'd', 'r', 'r',
+            'u', 'l', 'u'
+        ]
+    elif case == 2:
+        print('Harder puzzle:')
+        actions = [
+            'r', 'r', 'd', 'l', 'u', 'l', 'd', 'd', 'r', 'r', 'u', 'l', 'd', 'r', 'u', 'u', 'l', 'd', 'l', 'd', 'r',
+            'r',
+            'u', 'l', 'u', 'l', 'd', 'd', 'r', 'u', 'l', 'd', 'r', 'r', 'u'
+        ]
+    else:
+        actions = []
     goal_state = initial_state
     for a in actions:
         goal_state = goal_state.apply_action(a)
