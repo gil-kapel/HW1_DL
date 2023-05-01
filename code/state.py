@@ -84,6 +84,16 @@ class State:
             total_distance += diff
         return total_distance
 
+    def get_incorrect_tiles(self, other):
+        total_distance = 0
+        for i in range(1, 9):
+            self_location = self._get_location_char(str(i))
+            other_location = other._get_location_char(str(i))
+            diff = abs(self_location[0] - other_location[0]) + abs(self_location[1] - other_location[1])
+            if diff > 0:
+                total_distance += 1
+        return total_distance
+
     def is_same(self, other):
         return self.get_manhattan_distance(other) == 0
 
