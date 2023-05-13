@@ -50,9 +50,9 @@ def find_lqr_control_input(cart_pole_env):
     A = get_A(cart_pole_env)
     B = get_B(cart_pole_env)
 
-    w1 = 1.0
-    w2 = 2.0
-    w3 = 1.0
+    w1 = 0.5
+    w2 = 1.0
+    w3 = 0.5
 
     Q = np.matrix([[w1, 0, 0, 0],
                    [0, 0, 0, 0],
@@ -102,12 +102,14 @@ if __name__ == '__main__':
     verbose = False
     render = True
     q2_params = (np.linspace(-0.1, 0.1, 10) * np.pi, True)
-    unstable = 0.37
+    unstable = 0.364
     q3_params = (np.array([0.1, unstable, 0.5 * unstable]) * np.pi, True)
 
-    unstable = 1e-8
+    unstable = 0.00003
     q4_params = (np.array([0.1, unstable, 0.5 * unstable]) * np.pi, False)
-    q5_params = (np.array([0.1]) * np.pi, True, 4.0)
+
+    unstable = 0.22
+    q5_params = (np.array([0.1, unstable, 0.5 * unstable]) * np.pi, True, 4.0)
 
     chosen_params = q4_params
 
