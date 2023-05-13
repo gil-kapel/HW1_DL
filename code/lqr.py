@@ -105,7 +105,7 @@ if __name__ == '__main__':
     unstable = 0.364
     q3_params = (np.array([0.1, unstable, 0.5 * unstable]) * np.pi, True)
 
-    unstable = 0.00003
+    unstable = 0.08
     q4_params = (np.array([0.1, unstable, 0.5 * unstable]) * np.pi, False)
 
     unstable = 0.22
@@ -114,9 +114,9 @@ if __name__ == '__main__':
     chosen_params = q4_params
 
     if len(chosen_params) <= 2:
-        env = CartPoleContEnv(initial_theta=0.1)
+        env = CartPoleContEnv(initial_theta=0.1 * np.pi)
     else:
-        env = CartPoleContEnv(initial_theta=0.1, force_limit=chosen_params[2])
+        env = CartPoleContEnv(initial_theta=0.1 * np.pi, force_limit=chosen_params[2])
 
     # # print the matrices used in LQR
     print('A: {}'.format(get_A(env)))
