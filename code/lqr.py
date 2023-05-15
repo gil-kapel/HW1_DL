@@ -46,13 +46,17 @@ def find_lqr_control_input(cart_pole_env):
     """
     assert isinstance(cart_pole_env, CartPoleContEnv)
     cart_pole_env.reset()
-
+    temp_action = env.action_space.sample()
     A = get_A(cart_pole_env)
     B = get_B(cart_pole_env)
-
-    w1 = 0.5
-    w2 = 1.0
-    w3 = 0.5
+    if not q5: #if q5==false (we are in q2 or q3 orq3
+        w1 = 0.5
+        w2 = 1.0
+        w3 = 0.5
+    else: #if q5==true
+        w1 = 0.2
+        w2 = 1.0
+        w3 = 1.0
 
     Q = np.matrix([[w1, 0, 0, 0],
                    [0, 0, 0, 0],
@@ -72,6 +76,7 @@ def find_lqr_control_input(cart_pole_env):
 
     for t in range(T):
         ut = Ks[t] @ xs[t]
+        ut = np.clip(ut, env.action_space.low, env.action_space.high).astype(temp_action.dtype).reshape(temp_action.shape)
         next_xs, _, is_done, _ = env.step(np.squeeze(np.asarray(ut), 1))
         us.append(ut)
         xs.append(np.expand_dims(next_xs, 1))
@@ -102,33 +107,33 @@ if __name__ == '__main__':
     verbose = False
     render = True
     q2_params = (np.linspace(-0.1, 0.1, 10) * np.pi, True)
-    unstable = 0.364
+    unstable = 0.363
     q3_params = (np.array([0.1, unstable, 0.5 * unstable]) * np.pi, True)
 
-    unstable = 0.08
+    unstable = 0.11
     q4_params = (np.array([0.1, unstable, 0.5 * unstable]) * np.pi, False)
 
-    unstable = 0.22
-    q5_params = (np.array([0.1, unstable, 0.5 * unstable]) * np.pi, True, 4.0)
+    unstable = 0.11
+    q5_params = (np.array([0.1, unstable, 0.5 * unstable]) * np.pi, True, 4.0, True)
 
     chosen_params = q4_params
+    q5 = False
+    env = CartPoleContEnv(initial_theta=0.1*np.pi)
 
-    if len(chosen_params) <= 2:
-        env = CartPoleContEnv(initial_theta=0.1 * np.pi)
-    else:
-        env = CartPoleContEnv(initial_theta=0.1 * np.pi, force_limit=chosen_params[2])
-
-    # # print the matrices used in LQR
-    print('A: {}'.format(get_A(env)))
-    print('B: {}'.format(get_B(env)))
-    # use LQR to plan controls
     xs, us, Ks = find_lqr_control_input(env)
+    # # print the matrices used in LQR
+    # print('A: {}'.format(get_A(env)))
+    # print('B: {}'.format(get_B(env)))
+    # use LQR to plan controls
 
     for theta in chosen_params[0]:
         if len(chosen_params) <= 2:
             env = CartPoleContEnv(initial_theta=theta)
         else:
-            env = CartPoleContEnv(initial_theta=theta, force_limit=chosen_params[2])
+            env = CartPoleContEnv(initial_theta=0.1 * np.pi, force_limit=chosen_params[2], q5=True)
+            xs, us, Ks = find_lqr_control_input(env)
+            env = CartPoleContEnv(initial_theta=theta, force_limit=chosen_params[2], q5=True)
+
         actual_state = env.reset()
         # run the episode until termination, and print the difference between planned and actual
         is_done = False

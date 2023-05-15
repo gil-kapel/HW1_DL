@@ -11,7 +11,7 @@ class CartPoleContEnv(gym.Env):
         'video.frames_per_second': 50
     }
 
-    def __init__(self, initial_theta=0.0, force_limit=100.0):
+    def __init__(self, initial_theta=0.0, force_limit=100.0, q5=False):
         self.gravity = 9.8
         self.masscart = 1.0
         self.masspole = 0.1
@@ -19,6 +19,7 @@ class CartPoleContEnv(gym.Env):
         self.tau = 0.01  # seconds between state updates
         self.initial_theta = initial_theta
         self.planning_steps = 600
+        self.q5 = q5
 
         # Angle at which to fail the episode
         self.theta_threshold_radians = np.pi / 8.0
@@ -67,6 +68,8 @@ class CartPoleContEnv(gym.Env):
         return np.array(self.state) + state_change
 
     def step(self, action):
+        template_action=self.action_space.sample()
+        action=action.astype(template_action.dtype)
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
 
         self.state = tuple((self.get_state_change(self.state, action[0])).tolist())
@@ -162,3 +165,5 @@ if __name__ == '__main__':
         env.render()
         print(r)
     env.close()
+
+
